@@ -51,14 +51,16 @@ fi
 sudo mkdir /etc/apt-cacher-ng
 echo 'VfileUseRangeOps: 0' | sudo tee /etc/apt-cacher-ng/zzz_override.conf
 
+sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null
 # Try different package combinations:
 # first is for a clean jammy with the PPA
 # second is for Debian bookworm and newer
 # third is for OSRF package names
 # TODO: get OSRF to add proper package relations
-sudo DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends apt-cacher-ng vcstool python3-rosdep2 catkin python3-bloom || \
-sudo DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends apt-cacher-ng vcstool python3-rosdep2 colcon python3-colcon-package-information python3-colcon-ros python3-bloom || \
 sudo DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends apt-cacher-ng python3-vcstool python3-rosdep python3-colcon-cmake python3-colcon-installed-package-information python3-colcon-library-path python3-colcon-package-information python3-colcon-pkg-config python3-colcon-recursive-crawl python3-colcon-test-result python3-bloom
+sudo rm /etc/apt/sources.list.d/ros2.list
+sudo apt update
 
 echo "Setup build environment"
 
